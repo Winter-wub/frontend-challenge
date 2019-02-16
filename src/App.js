@@ -1,8 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import Home from './views/Home';
+import Product from './views/Product';
 import About from './views/About';
 import Catagories from './views/Catagories';
+import NotFound from './views/404';
 import './assets/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
@@ -81,9 +83,13 @@ const navagationBar = () => {
 
 const content = () => (
 	<React.Fragment>
-		<Route exact path="/" component={Home} />
-		<Route path="/store" component={Catagories} />
-		<Route path="/about" component={About} />
+		<Switch>
+			<Route exact path="/" component={Home} />
+			<Route path="/store" component={Catagories} />
+			<Route path="/products/:id" component={Product} />
+			<Route path="/about" component={About} />
+			<Route component={NotFound} />
+		</Switch>
 	</React.Fragment>
 );
 
