@@ -64,7 +64,7 @@ const Product = ({ match, cart, addItem }) => {
 												addItem({ ...product, value });
 											}}
 										>
-											+Cart
+											<i className="fa fa-plus" aria-hidden="true" /> Cart
 										</button>
 										<button className="btn btn-outline-success">
 											Checkout

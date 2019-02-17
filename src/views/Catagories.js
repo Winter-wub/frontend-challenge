@@ -8,7 +8,7 @@ const Catagories = () => {
 	return (
 		<div>
 			<h1>Store</h1>
-			<div className="container">
+			<div className="container bg-white" style={{ borderRadius: '20px' }}>
 				<div className="filter-showcase">
 					<ul />
 				</div>
