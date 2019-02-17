@@ -10,14 +10,13 @@ const userReducer = (state = initState, action) => {
 				...state,
 				isLogin: !state.isLogin,
 			};
-		case 'STORE_USERS':
+		case 'STORE_USER':
 			return {
 				...state,
-				userInfo: {
-					...action.params.userInfo,
-				},
+				userInfo: action.data,
+				isLogin: true,
 			};
-		case 'DELETE_USERS':
+		case 'DELETE_USER':
 			return {
 				...state,
 				userInfo: {},

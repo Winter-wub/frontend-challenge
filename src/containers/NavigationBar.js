@@ -93,6 +93,7 @@ const NavagationBar = ({ user, cart, removeCart }) => {
 									width: '300px',
 									position: 'fixed',
 									marginTop: '50px',
+									zIndex: '9999',
 								}}
 							>
 								{items.length <= 0 ? (

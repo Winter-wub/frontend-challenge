@@ -9,10 +9,33 @@ const Catagories = () => {
 		<div>
 			<h1>Store</h1>
 			<div className="container bg-white" style={{ borderRadius: '20px' }}>
-				<div className="filter-showcase">
-					<ul />
+				<div
+					className="d-flex justify-content-center sticky-top"
+					style={{
+						paddingTop: '60px',
+					}}
+				>
+					<div class="input-group mb-3">
+						<input
+							type="text"
+							class="form-control"
+							placeholder="Search"
+							aria-label="Search-Item"
+							aria-describedby="button-addon2"
+						/>
+						<div class="input-group-append">
+							<button
+								class="btn btn-outline-secondary"
+								type="button"
+								id="button-addon2"
+							>
+								<i className="fa fa-search" aria-hidden="true" />
+							</button>
+						</div>
+						<div />
+					</div>
 				</div>
-				<div className="showcase">
+				<div className="showcase ">
 					{isLoad ? (
 						<div className="spinner-border text-primary" role="status">
 							<span className="sr-only">Loading...</span>
