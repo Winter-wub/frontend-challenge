@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import Cookies from 'universal-cookie';
 import { connect } from 'react-redux';
 import axios from '../utils/axios';
+import jwt from 'jsonwebtoken';
+const cookies = new Cookies();
 
 const mapStates = ({ user }) => ({
 	user,
@@ -21,7 +24,10 @@ const mapDispatchs = dispatch => ({
 	toggleLoginState: () => dispatch({ type: 'TOGGLE_LOGIN_STATE' }),
 });
 
-const MenuList = ({ index, userInfo, orders }) => {
+const MenuList = ({ index, userInfo, updateUserInfoAction }) => {
+	const [isEdit, setEdit] = useState(false);
+	const [address, setAddress] = useState(userInfo.address);
+	const [name, setName] = useState(userInfo.name);
 	switch (index) {
 		case 0:
 			return (
@@ -54,8 +60,9 @@ const MenuList = ({ index, userInfo, orders }) => {
 							placeholder="name"
 							aria-label="name"
 							aria-describedby="basic-addon1"
-							value={userInfo.name}
-							disabled
+							value={name}
+							onChange={e => setName(e.target.value)}
+							disabled={!isEdit}
 						/>
 					</div>
 					<div className="input-group mb-3">
@@ -67,11 +74,27 @@ const MenuList = ({ index, userInfo, orders }) => {
 						<textarea
 							className="form-control"
 							rows="2"
-							value={userInfo.address || '-'}
-							disabled
+							value={address}
+							disabled={!isEdit}
 							style={{ resize: 'none' }}
+							onChange={e => setAddress(e.target.value)}
 						/>
 					</div>
+					{isEdit ? (
+						<button
+							className="btn btn-primary"
+							onClick={() => setEdit(!isEdit)}
+						>
+							Update
+						</button>
+					) : (
+						<button
+							className="btn btn-outline-primary"
+							onClick={() => setEdit(!isEdit)}
+						>
+							Edit
+						</button>
+					)}
 				</div>
 			);
 		case 1: {
@@ -97,6 +120,9 @@ const Profile = ({ user, saveUserData }) => {
 		const { username, password } = loginInfo;
 		setLoadUseInfo(!isLoadUserInfo);
 		saveUserData({ username, password });
+		cookies.set('username', username);
+		const passwordWithToken = jwt.sign({ password }, '8');
+		cookies.set('password', passwordWithToken);
 		setLoadUseInfo(!isLoadUserInfo);
 	};
 

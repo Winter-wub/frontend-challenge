@@ -1,3 +1,6 @@
+import Cookies from 'universal-cookie';
+const cookie = new Cookies();
+
 const initState = {
 	userInfo: {},
 	isLogin: false,
@@ -17,9 +20,12 @@ const userReducer = (state = initState, action) => {
 				isLogin: true,
 			};
 		case 'DELETE_USER':
+			cookie.remove('username');
+			cookie.remove('password');
 			return {
 				...state,
 				userInfo: {},
+				isLogin: false,
 			};
 		default:
 			return state;

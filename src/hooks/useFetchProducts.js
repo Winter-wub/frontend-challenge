@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from '../utils/axios';
 
-const useFetchProducts = (format = 'default', type = 'shirt', limit = 5) => {
+const useFetchProducts = (type = 'shirt', limit = 5) => {
 	const [products, setProducts] = useState([]);
 	const [isLoad, setLoad] = useState(false);
 	const [page, setPage] = useState(1);
@@ -17,33 +17,10 @@ const useFetchProducts = (format = 'default', type = 'shirt', limit = 5) => {
 		}
 	};
 
-	const productFormatter = item => ({
-		id: item.id,
-		imgUrl: item.image_url,
-		label: item.name,
-		description: item.description,
-		price: item.price,
-		url: `/products/${item.id}`,
-	});
-
-	const formatterCarousel = product => ({
-		label: product.name,
-		description: product.description,
-		img: product.image_url,
-	});
-
 	useEffect(() => {
 		setLoad(true);
 		fetchProduct(type, page, limit).then(products => {
-			if (format === 'default') {
-				setProducts(products);
-			} else if (format === 'carousal') {
-				const carousalItems = products.map(item => formatterCarousel(item));
-				setProducts(carousalItems);
-			} else if (format === 'items') {
-				const items = products.map(item => productFormatter(item));
-				setProducts(items);
-			}
+			setProducts(products);
 			setLoad(false);
 		});
 	}, [page]);

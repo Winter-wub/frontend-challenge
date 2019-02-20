@@ -1,3 +1,4 @@
+import _ from 'lodash';
 const initState = {
 	items: [],
 };
@@ -10,9 +11,9 @@ const cartReducer = (state = initState, action) => {
 				items: [...state.items, action.params.cart],
 			};
 		case 'REMOVE_ITEM_CART':
-			const currentCart = state.items.filter(
-				item => item.id !== action.params.id,
-			);
+			const currentCart = _.cloneDeep(state.items);
+			currentCart.splice(action.params.index, 1);
+
 			return {
 				...state,
 				items: currentCart,

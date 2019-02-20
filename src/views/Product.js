@@ -11,7 +11,7 @@ const mapDispatchs = dispatch => ({
 		dispatch({ type: 'ADD_ITEM_CART', params: { cart: { ...item } } }),
 });
 
-const Product = ({ match, cart, addItem }) => {
+const Product = ({ match, cart, addItem, history }) => {
 	const [value, setValue] = useState(1);
 	const { isLoad, product } = useProduct(match.params.id);
 
@@ -24,6 +24,14 @@ const Product = ({ match, cart, addItem }) => {
 				</div>
 			) : (
 				<div>
+					<button
+						className="btn btn-secondary"
+						onClick={() => {
+							history.goBack();
+						}}
+					>
+						<i className="fa fa-chevron-left" /> Back
+					</button>
 					<div
 						className="d-flex justify-content-center"
 						style={{ margin: '1%' }}
@@ -66,7 +74,13 @@ const Product = ({ match, cart, addItem }) => {
 										>
 											<i className="fa fa-plus" aria-hidden="true" /> Cart
 										</button>
-										<button className="btn btn-outline-success">
+										<button
+											className="btn btn-outline-success"
+											onClick={() => {
+												addItem({ ...product, value });
+												history.push('/checkout');
+											}}
+										>
 											Checkout
 										</button>
 									</div>
