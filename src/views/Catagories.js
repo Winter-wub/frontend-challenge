@@ -14,7 +14,7 @@ const mapDispatchs = dispatch => ({
 });
 
 const Catagories = ({ addItem, cart }) => {
-	const { isLoad, products, page, setPage } = useFetchProducts('items');
+	const { isLoad, products, page, setPage } = useFetchProducts('all');
 
 	return (
 		<div>
@@ -24,6 +24,7 @@ const Catagories = ({ addItem, cart }) => {
 					className="d-flex justify-content-center sticky-top"
 					style={{
 						paddingTop: '60px',
+						zIndex: '999',
 					}}
 				>
 					<div className="input-group mb-3" style={{ marginRight: '2px' }}>
@@ -43,15 +44,6 @@ const Catagories = ({ addItem, cart }) => {
 								<i className="fa fa-search" aria-hidden="true" />
 							</button>
 						</div>
-						{cart.items.length >= 1 && (
-							<button
-								to="/checkout"
-								className="btn btn-success"
-								style={{ marginLeft: '2px' }}
-							>
-								<i className="fa fa-money" /> Checkout
-							</button>
-						)}
 					</div>
 				</div>
 				<div className="showcase" style={{ paddingLeft: '30px' }}>
@@ -63,7 +55,9 @@ const Catagories = ({ addItem, cart }) => {
 						<div className="row">
 							{products.length <= 0 ? (
 								<div className="col">
-									<span role="img">หมดแล้วจ้า</span>
+									<span role="img" aria-label="empty">
+										หมดแล้วจ้า ❎
+									</span>
 								</div>
 							) : (
 								products.map(rawProduct => {

@@ -12,10 +12,11 @@ import Product from './views/Product';
 import About from './views/About';
 import Catagories from './views/Catagories';
 import Profile from './views/Profile';
+import Orders from './views/Orders';
 import NotFound from './views/404';
 import NavagationBar from './containers/NavigationBar';
 
-const Content = () => (
+const Routes = () => (
 	<div
 		style={{
 			backgroundColor: 'cadetblue',
@@ -31,6 +32,7 @@ const Content = () => (
 			<Route path="/products" component={Catagories} />
 			<Route path="/profile" component={Profile} />
 			<Route path="/about" component={About} />
+			<Route path="/orders" component={Orders} />
 			<Route component={NotFound} />
 		</Switch>
 	</div>
@@ -47,5 +49,5 @@ const withRouter = App => () => (
 		<App />
 	</Router>
 );
-const App = withStore(withRouter(withLayout(NavagationBar, Content, Footer)));
+const App = withStore(withRouter(withLayout(NavagationBar, Routes, Footer)));
 export default App;

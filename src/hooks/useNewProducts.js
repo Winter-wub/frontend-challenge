@@ -1,30 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from '../utils/axios';
-import Axios from 'axios';
 const useNewProducts = (format = 'default') => {
 	const [products, setProducts] = useState([]);
 	const [isNewProductsLoad, setisLoad] = useState(false);
 	const fetchProducts = async () => {
 		try {
-			const shirtRequest = () =>
-				axios.get('/products?type=shirt&page=1&limit=3');
-			const pantRequst = () => axios.get('/products?type=pant&page=1&limit=3');
-			const [res1, res2] = await Axios.all([shirtRequest(), pantRequst()]);
-			const { data: rawData1 } = res1;
-			const { data: rawData2 } = res2;
-			const { data: item1 } = rawData1;
-			const { data: item2 } = rawData2;
-			let products = [];
+			const { data: response } = await axios.get(
+				'/products?type=all&page=1&limit=3',
+			);
 
-			item1.forEach(item => {
-				products.push(item);
-			});
-
-			item2.forEach(item => {
-				products.push(item);
-			});
-
-			return products;
+			return response.data;
 		} catch (error) {
 			console.log(error);
 			return [];

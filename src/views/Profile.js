@@ -10,7 +10,7 @@ const mapStates = ({ user }) => ({
 });
 
 const storeUserAction = userLoginInfo => dispatch => {
-	axios.post('/login/', userLoginInfo).then(({ data }) => {
+	axios.post('/login', userLoginInfo).then(({ data }) => {
 		const { data: userInfo } = data;
 		return dispatch({
 			type: 'STORE_USER',
@@ -146,12 +146,6 @@ const Profile = ({ user, saveUserData }) => {
 									onClick={() => setMenu(0)}
 								>
 									General
-								</button>
-								<button
-									className="list-group-item list-group-item-action"
-									onClick={() => setMenu(1)}
-								>
-									Orders
 								</button>
 							</div>
 						</div>

@@ -1,15 +1,13 @@
+import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
 import Checkout from '../containers/Checkout';
-import Cookies from 'universal-cookie';
-import jwt from 'jsonwebtoken';
+import Cart from '../containers/Cart';
+import useFetchUserFromCookie from '../hooks/useFetchUserFromCookie';
 import axios from '../utils/axios';
-import Popover from 'react-tiny-popover';
 import { connect } from 'react-redux';
-const cookies = new Cookies();
 
 const storeUserAction = userLoginInfo => dispatch => {
-	axios.post('/login/', userLoginInfo).then(({ data }) => {
+	axios.post('/login', userLoginInfo).then(({ data }) => {
 		const { data: userInfo } = data;
 		return dispatch({
 			type: 'STORE_USER',
@@ -30,40 +28,11 @@ const mapDispatch = dispatch => ({
 	removeUserData: () => dispatch({ type: 'DELETE_USER' }),
 });
 
-const NavagationBar = ({
-	user,
-	cart,
-	removeCart,
-	saveUserData,
-	removeUserData,
-}) => {
-	const [isPopoverOpen, setPopover] = useState(false);
-	const [isLoadUserInfo, setLoadUserInfo] = useState(false);
+const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
 	const { items } = cart;
 	const { isLogin } = user;
-	const fetchUserInfoFromCookies = () => {
-		setLoadUserInfo(true);
-		if (cookies.get('username') && cookies.get('password')) {
-			const username = cookies.get('username');
-			const rawPassword = cookies.get('password');
-			const { password } = jwt.verify(rawPassword, '8');
-			setLoadUserInfo(false);
+	const { isLoadUserInfo } = useFetchUserFromCookie(saveUserData);
 
-			return { username, password };
-		} else {
-			setLoadUserInfo(false);
-
-			return null;
-		}
-	};
-
-	console.log(user.userInfo.uid);
-	useEffect(() => {
-		const userInfo = fetchUserInfoFromCookies();
-		if (userInfo) {
-			saveUserData(userInfo);
-		}
-	}, []);
 	return (
 		<React.Fragment>
 			<nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
@@ -130,7 +99,7 @@ const NavagationBar = ({
 								</div>
 							</li>
 						) : (
-							<li className="nav-tem">
+							<li className="nav-item">
 								<NavLink
 									className="btn btn-outline-primary nav-link "
 									activeClassName="active"
@@ -138,6 +107,17 @@ const NavagationBar = ({
 									exact
 								>
 									Login
+								</NavLink>
+							</li>
+						)}
+						{isLogin && (
+							<li className="nav-item">
+								<NavLink
+									className="nav-link"
+									activeClassName="active"
+									to="/orders"
+								>
+									Orders
 								</NavLink>
 							</li>
 						)}
@@ -157,103 +137,19 @@ const NavagationBar = ({
 					</button>
 				</div>
 				<div className="nav-item">
-					<Popover
-						width={40}
-						isOpen={isPopoverOpen}
-						position="buttom"
-						padding={10}
-						disableReposition
-						onClickOutside={() => setPopover(!isPopoverOpen)}
-						content={
-							<div
-								style={{
-									width: '300px',
-									position: 'fixed',
-									marginTop: '50px',
-									zIndex: '9999',
-								}}
-							>
-								{items.length <= 0 ? (
-									<div
-										className="jumbotron bg-dark"
-										style={{ borderBottomRightRadius: '25px' }}
-									>
-										<p className="lead" style={{ color: 'white' }}>
-											ยังไม่ได้เพิ่มอะไรเข้ามาเลย
-											<span role="img" aria-label="empty">
-												🤷‍♂️
-											</span>
-										</p>
-									</div>
-								) : (
-									<table
-										className="table table-dark"
-										style={{ borderBottomRightRadius: '25px' }}
-									>
-										<thead>
-											<tr>
-												<th scope="col" />
-												<th scope="col">สินค้า</th>
-												<th scope="col">จำนวน</th>
-												<th scope="col" />
-											</tr>
-										</thead>
-										<tbody>
-											{items.map((item, index) => (
-												<tr key={index} style={{ margin: '2%' }}>
-													<td>
-														<img
-															src={item.image_url}
-															alt={item.name}
-															style={{
-																width: '65px',
-																borderRadius: '20%',
-																margin: '2%',
-															}}
-														/>
-													</td>
-													<td>
-														<b>{item.name}</b>
-													</td>
-													<td>{item.value}</td>
-													<td>
-														<button
-															className="btn btn-danger"
-															style={{ margin: '2%' }}
-															onClick={() => removeCart(index)}
-														>
-															<i className="fa fa-trash" aria-hidden="true" />
-														</button>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								)}
-							</div>
-						}
-					>
-						<button
-							style={{ marginRight: '20px' }}
-							className="btn btn-outline-primary"
-							onClick={() => setPopover(!isPopoverOpen)}
-						>
-							<i className="fa fa-shopping-cart" aria-hidden="true" /> Cart (
-							{items.length})
-						</button>
-					</Popover>
-					{items.length >= 1 && (
-						<button
-							to="/checkout"
+					<Cart />
+				</div>
+				{items.length >= 1 && isLogin && (
+					<div className="nav-item">
+						<Checkout
+							productsCart={items}
+							userId={user.userInfo.uid}
 							className="btn btn-success"
-							onClick={() =>
-								Checkout(items.map(({ id }) => id), user.userInfo.uid)
-							}
 						>
 							<i className="fa fa-money" /> Checkout
-						</button>
-					)}
-				</div>
+						</Checkout>
+					</div>
+				)}
 			</nav>
 		</React.Fragment>
 	);

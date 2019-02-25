@@ -14,6 +14,7 @@ const useFetchProducts = (type = 'shirt', limit = 5) => {
 			return data.data;
 		} catch (error) {
 			console.log(error);
+			return [];
 		}
 	};
 
