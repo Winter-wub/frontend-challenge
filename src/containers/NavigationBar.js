@@ -116,6 +116,7 @@ const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
 									className="nav-link"
 									activeClassName="active"
 									to="/orders"
+									exact
 								>
 									Orders
 								</NavLink>

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import carousel from '../components/carousel';
 import useNewProducts from '../hooks/useNewProducts';
 
-const Home = () => {
+const Home = ({ history }) => {
 	const { isNewProductsLoad, products } = useNewProducts('carousal');
-
+	useEffect(() => {
+		history.push('/products');
+	}, []);
 	return (
 		<div className="container-fluid">
 			<h1>Home</h1>
