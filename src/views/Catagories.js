@@ -60,36 +60,38 @@ const Catagories = ({ addItem, cart }) => {
 									</span>
 								</div>
 							) : (
-								products.map(rawProduct => {
-									const product = productFormatter(rawProduct);
+								products
+									.filter(rawProduct => rawProduct.in_stock > 0)
+									.map(rawProduct => {
+										const product = productFormatter(rawProduct);
 
-									return (
-										<Card
-											label={product.label}
-											imgUrl={product.imgUrl}
-											key={product.id}
-											link={product.url}
-										>
-											<p className="card-text">{product.description}</p>
-											<NavLink
-												to={product.url}
-												className="btn btn-outline-primary"
-												style={{ margin: '15px' }}
+										return (
+											<Card
+												label={product.label}
+												imgUrl={product.imgUrl}
+												key={product.id}
+												link={product.url}
 											>
-												{product.price} ฿
-											</NavLink>
-											<button
-												className="btn btn-outline-warning"
-												style={{ margin: '15px' }}
-												onClick={() => {
-													addItem({ ...rawProduct, value: 1 });
-												}}
-											>
-												<i className="fa fa-plus" aria-hidden="true" /> Cart
-											</button>
-										</Card>
-									);
-								})
+												<p className="card-text">{product.description}</p>
+												<NavLink
+													to={product.url}
+													className="btn btn-outline-primary"
+													style={{ margin: '15px' }}
+												>
+													{product.price} ฿
+												</NavLink>
+												<button
+													className="btn btn-outline-warning"
+													style={{ margin: '15px' }}
+													onClick={() => {
+														addItem({ ...rawProduct, value: 1 });
+													}}
+												>
+													<i className="fa fa-plus" aria-hidden="true" /> Cart
+												</button>
+											</Card>
+										);
+									})
 							)}
 						</div>
 					)}
