@@ -110,7 +110,7 @@ const MenuList = ({ index, userInfo, updateUserInfoAction }) => {
 	}
 };
 
-const Profile = ({ user, saveUserData }) => {
+const Profile = ({ user, saveUserData, history }) => {
 	const { isLogin, userInfo } = user;
 	const [loginInfo, setLoginInfo] = useState(null);
 	const [isLoadUserInfo, setLoadUseInfo] = useState(false);
@@ -156,74 +156,77 @@ const Profile = ({ user, saveUserData }) => {
 						<span className="sr-only">Loading...</span>
 					</div>
 				) : (
-					<div className="row">
-						<div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-							<div className="input-group mb-3">
-								<div className="input-group-prepend">
-									<span className="input-group-text" id="basic-addon1">
-										Username
-									</span>
-								</div>
-								<input
-									type="text"
-									className="form-control"
-									placeholder="Username"
-									aria-label="Username"
-									aria-describedby="basic-addon1"
-									autoFocus
-									onChange={e => {
-										setLoginInfo({ ...loginInfo, username: e.target.value });
-									}}
-								/>
-							</div>
-							<div className="input-group mb-3">
-								<div className="input-group-prepend">
-									<span className="input-group-text" id="basic-addon1">
-										Password
-									</span>
-								</div>
-								<input
-									type="password"
-									className="form-control"
-									placeholder="password"
-									aria-label="password"
-									aria-describedby="basic-addon1"
-									onChange={e => {
-										setLoginInfo({ ...loginInfo, password: e.target.value });
-									}}
-								/>
-							</div>
-							<ul style={{ listStyleType: 'none' }}>
-								<li>
-									<button
-										className="btn btn-primary"
-										style={{
-											margin: '2%',
-											width: '150px',
-											height: '50px',
-											borderRadius: '30px',
+					<form onSubmit={() => onClickLogin()}>
+						<div className="row">
+							<div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+								<div className="input-group mb-3">
+									<div className="input-group-prepend">
+										<span className="input-group-text" id="basic-addon1">
+											Username
+										</span>
+									</div>
+									<input
+										type="text"
+										className="form-control"
+										placeholder="Username"
+										aria-label="Username"
+										aria-describedby="basic-addon1"
+										autoFocus
+										onChange={e => {
+											setLoginInfo({ ...loginInfo, username: e.target.value });
 										}}
-										onClick={() => onClickLogin()}
-									>
-										<i className="fa fa-sign-in" aria-hidden="true" /> Login
-									</button>
-								</li>
-								<li>
-									<button
-										className="btn btn-success"
-										style={{
-											margin: '2%',
-											width: '150px',
-											height: '50px',
-											borderRadius: '30px',
+									/>
+								</div>
+								<div className="input-group mb-3">
+									<div className="input-group-prepend">
+										<span className="input-group-text" id="basic-addon1">
+											Password
+										</span>
+									</div>
+									<input
+										type="password"
+										className="form-control"
+										placeholder="password"
+										aria-label="password"
+										aria-describedby="basic-addon1"
+										onChange={e => {
+											setLoginInfo({ ...loginInfo, password: e.target.value });
 										}}
-									>
-										<i className="fa fa-users" aria-hidden="true" /> Register
-									</button>
-								</li>
-							</ul>
+									/>
+								</div>
+								<ul style={{ listStyleType: 'none' }}>
+									<li>
+										<button
+											type="submit"
+											className="btn btn-primary"
+											style={{
+												margin: '2%',
+												width: '150px',
+												height: '50px',
+												borderRadius: '30px',
+											}}
+										>
+											<i className="fa fa-sign-in" aria-hidden="true" /> Login
+										</button>
+									</li>
+									<li>
+										<button
+											className="btn btn-success"
+											style={{
+												margin: '2%',
+												width: '150px',
+												height: '50px',
+												borderRadius: '30px',
+											}}
+											onClick={() => history.push('/register')}
+										>
+											<i className="fa fa-users" aria-hidden="true" /> Register
+										</button>
+									</li>
+								</ul>
+							</div>
 						</div>
-					</div>
+					</form>
 				)}
 			</div>
 		</div>
