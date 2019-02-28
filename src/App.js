@@ -13,6 +13,7 @@ import About from './views/About';
 import Catagories from './views/Catagories';
 import Profile from './views/Profile';
 import Orders from './views/Orders';
+import Register from './views/Register';
 import NotFound from './views/404';
 import NavagationBar from './containers/NavigationBar';
 
@@ -31,6 +32,7 @@ const Routes = () => (
 			<Route path="/products/:id" component={Product} />
 			<Route path="/products" component={Catagories} />
 			<Route path="/profile" component={Profile} />
+			<Route path="/register" component={Register} />
 			<Route path="/about" component={About} />
 			<Route path="/orders" component={Orders} />
 			<Route component={NotFound} />
