@@ -92,7 +92,10 @@ const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
 									</NavLink>
 									<button
 										className="dropdown-item"
-										onClick={() => removeUserData()}
+										onClick={() => {
+											removeUserData();
+											window.location.reload();
+										}}
 									>
 										Logout
 									</button>
