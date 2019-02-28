@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import usePayment from '../hooks/usePayment';
 import Model from 'react-responsive-modal';
-import axios from '../utils/axios';
 import useFetchOrders from '../hooks/useFetchOrders';
 
 const mapStates = ({ user }) => ({
@@ -13,59 +11,19 @@ const mapStates = ({ user }) => ({
 
 const Orders = ({ user, history }) => {
 	const { userInfo, isLogin } = user;
-	const [orderId, setOrderId] = useState('');
-	const [totalPrice, setTotalPrice] = useState(0);
 	const [isOpen, setOpen] = useState(false);
-	const [cardNum, setCardNum] = useState('');
-	const [holder, setHolder] = useState('');
-	const [month, setMonth] = useState(1);
-	const [year, setYear] = useState(2020);
-	const [sec, setSec] = useState('');
+	const {
+		setOrderId,
+		setTotalPrice,
+		setCardInfo,
+		cardInfo,
+		payment,
+	} = usePayment(history);
 
 	if (!isLogin) {
 		history.push('/profile');
 	}
 	const { orders, isLoad } = useFetchOrders(userInfo);
-
-	const payment = () => {
-		const swal = withReactContent(Swal);
-		const card = {
-			name: holder,
-			number: cardNum,
-			expiration_month: month,
-			expiration_year: year,
-			security_code: sec,
-		};
-
-		window.Omise.createToken('card', card, async (statusCode, response) => {
-			try {
-				if (statusCode === 200) {
-					const { data: payment } = await axios.post('/payment', {
-						data: {
-							card_info: { ...response },
-							order: { orderId, totalPrice },
-						},
-					});
-
-					swal.fire('สำเร็จ', payment, 'success').then(() => {
-						history.push('/products');
-						history.push('/orders');
-					});
-				} else {
-					swal.fire('ผิดพลาด', response.message, 'error').then(() => {
-						history.push('/products');
-						history.push('/orders');
-					});
-				}
-			} catch (error) {
-				swal.fire(
-					'ผิดพลาด',
-					'ไม่สามาถทำรายการได้ขณะนี้โปรดลองอีกครั้ง',
-					'error',
-				);
-			}
-		});
-	};
 
 	return (
 		<div>
@@ -176,8 +134,8 @@ const Orders = ({ user, history }) => {
 							placeholder="Enter card number"
 							aria-label="Card number"
 							aria-describedby="basic-addon1"
-							value={cardNum}
-							onChange={e => setCardNum(e.target.value)}
+							value={cardInfo.cardNum}
+							onChange={e => setCardInfo.setCardNum(e.target.value)}
 						/>
 					</div>
 					<div class="input-group mb-3">
@@ -192,8 +150,8 @@ const Orders = ({ user, history }) => {
 							placeholder="Enter card holder name"
 							aria-label="Name"
 							aria-describedby="basic-addon1"
-							value={holder}
-							onChange={e => setHolder(e.target.value)}
+							value={cardInfo.holder}
+							onChange={e => setCardInfo.setHolder(e.target.value)}
 						/>
 					</div>
 					<div class="input-group mb-3">
@@ -208,8 +166,8 @@ const Orders = ({ user, history }) => {
 							placeholder="Enter CCV"
 							aria-label="CCV"
 							aria-describedby="basic-addon1"
-							value={sec}
-							onChange={e => setSec(e.target.value)}
+							value={cardInfo.sec}
+							onChange={e => setCardInfo.setSec(e.target.value)}
 						/>
 					</div>
 					<div class="input-group mb-3">
@@ -226,8 +184,8 @@ const Orders = ({ user, history }) => {
 							placeholder="Enter month"
 							aria-label="Month"
 							aria-describedby="basic-addon1"
-							value={month}
-							onChange={e => setMonth(e.target.value)}
+							value={cardInfo.month}
+							onChange={e => setCardInfo.setMonth(e.target.value)}
 						/>
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="basic-addon1">
@@ -240,8 +198,8 @@ const Orders = ({ user, history }) => {
 							placeholder="Enter Year"
 							aria-label="Year"
 							aria-describedby="basic-addon1"
-							value={year}
-							onChange={e => setYear(e.target.value)}
+							value={cardInfo.year}
+							onChange={e => setCardInfo.setYear(e.target.value)}
 						/>
 					</div>
 					<div className="mb-3">
