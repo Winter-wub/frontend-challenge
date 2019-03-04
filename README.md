@@ -1,5 +1,5 @@
  # Frontend Challenge 😵
-This application represent the simple web shop for developer challenge demo  <a href="https://developer-challange.firebaseapp.com">here</a> 🔗
+This application represent the simple web shop and PWA app for developer challenge backend demo   <a href="https://developer-challange.firebaseapp.com">here</a> 🔗
 
 ## Requirement
  - nodejs 🏧
