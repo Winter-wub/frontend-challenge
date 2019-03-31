@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import Checkout from '../containers/Checkout';
 import Cart from '../containers/Cart';
 import { connect } from 'react-redux';
-import firebaseLib from 'firebase';
+import firebase from '../utils/firebase';
 
 const mapStates = ({ cart, user }) => ({
 	cart,
 	user,
 });
 const signOutAction = () => dispatch => {
-	firebaseLib
+	firebase
 		.auth()
 		.signOut()
 		.then(() => {
@@ -20,27 +20,31 @@ const signOutAction = () => dispatch => {
 		});
 };
 
-const signInWithCurrentData = () => dispatch => {
-	const userInfo = firebaseLib.auth().currentUser;
-	if (userInfo) {
-		return dispatch({
-			...userInfo,
-		});
-	} else {
-		return dispatch();
-	}
-};
 const mapDispatch = dispatch => ({
 	removeCart: index =>
 		dispatch({ type: 'REMOVE_ITEM_CART', params: { index } }),
 	removeUserData: () => dispatch(signOutAction()),
-	saveUserData: () => dispatch(signInWithCurrentData()),
+	saveUserData: userInfo =>
+		dispatch({
+			type: 'STORE_USER',
+			data: userInfo,
+		}),
 });
 
 const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
 	const { items } = cart;
 	const { isLogin } = user;
 
+	useEffect(() => {
+		const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
+			if (user && !user.isLogin) {
+				saveUserData(user);
+			}
+		});
+		return () => {
+			unregisterAuthObserver();
+		};
+	}, []);
 	return (
 		<React.Fragment>
 			<nav className="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
