@@ -2,36 +2,44 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import Checkout from '../containers/Checkout';
 import Cart from '../containers/Cart';
-import useFetchUserFromCookie from '../hooks/useFetchUserFromCookie';
-import axios from '../utils/axios';
 import { connect } from 'react-redux';
-
-const storeUserAction = userLoginInfo => dispatch => {
-	axios.post('/login', userLoginInfo).then(({ data }) => {
-		const { data: userInfo } = data;
-		return dispatch({
-			type: 'STORE_USER',
-			data: userInfo,
-		});
-	});
-};
+import firebaseLib from 'firebase';
 
 const mapStates = ({ cart, user }) => ({
 	cart,
 	user,
 });
+const signOutAction = () => dispatch => {
+	firebaseLib
+		.auth()
+		.signOut()
+		.then(() => {
+			return dispatch({
+				type: 'DELETE_USER',
+			});
+		});
+};
 
+const signInWithCurrentData = () => dispatch => {
+	const userInfo = firebaseLib.auth().currentUser;
+	if (userInfo) {
+		return dispatch({
+			...userInfo,
+		});
+	} else {
+		return dispatch();
+	}
+};
 const mapDispatch = dispatch => ({
 	removeCart: index =>
 		dispatch({ type: 'REMOVE_ITEM_CART', params: { index } }),
-	saveUserData: userInfo => dispatch(storeUserAction(userInfo)),
-	removeUserData: () => dispatch({ type: 'DELETE_USER' }),
+	removeUserData: () => dispatch(signOutAction()),
+	saveUserData: () => dispatch(signInWithCurrentData()),
 });
 
 const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
 	const { items } = cart;
 	const { isLogin } = user;
-	const { isLoadUserInfo } = useFetchUserFromCookie(saveUserData);
 
 	return (
 		<React.Fragment>
@@ -71,11 +79,7 @@ const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
 								About
 							</NavLink>
 						</li>
-						{isLoadUserInfo ? (
-							<div className="spinner-border text-primary" role="status">
-								<span className="sr-only">Loading...</span>
-							</div>
-						) : isLogin ? (
+						{isLogin ? (
 							<li className="nav-item dropdown">
 								<button
 									className="btn btn-outline-primary nav-link dropdown-toggle"
