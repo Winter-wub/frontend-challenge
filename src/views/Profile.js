@@ -1,53 +1,29 @@
-import React, { useState } from 'react';
-import Cookies from 'universal-cookie';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import axios from '../utils/axios';
-import jwt from 'jsonwebtoken';
-const cookies = new Cookies();
+import firebase from '../utils/firebase';
+import firebaseLib from 'firebase';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 const mapStates = ({ user }) => ({
 	user,
 });
 
-const storeUserAction = userLoginInfo => dispatch => {
-	axios.post('/login', userLoginInfo).then(({ data }) => {
-		const { data: userInfo } = data;
-		return dispatch({
+const mapDispatchs = dispatch => ({
+	saveUserData: userInfo =>
+		dispatch({
 			type: 'STORE_USER',
 			data: userInfo,
-		});
-	});
-};
-
-const mapDispatchs = dispatch => ({
-	saveUserData: userInfo => dispatch(storeUserAction(userInfo)),
+		}),
 	toggleLoginState: () => dispatch({ type: 'TOGGLE_LOGIN_STATE' }),
 });
 
 const MenuList = ({ index, userInfo, updateUserInfoAction }) => {
 	const [isEdit, setEdit] = useState(false);
-	const [address, setAddress] = useState(userInfo.address);
-	const [name, setName] = useState(userInfo.name);
+	const [name, setName] = useState(userInfo.displayName);
 	switch (index) {
 		case 0:
 			return (
 				<div className="col">
-					<div className="input-group mb-3">
-						<div className="input-group-prepend">
-							<span className="input-group-text" id="basic-addon1">
-								Username
-							</span>
-						</div>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Username"
-							aria-label="Username"
-							aria-describedby="basic-addon1"
-							value={userInfo.username}
-							disabled
-						/>
-					</div>
 					<div className="input-group mb-3">
 						<div className="input-group-prepend">
 							<span className="input-group-text" id="basic-addon1">
@@ -65,7 +41,7 @@ const MenuList = ({ index, userInfo, updateUserInfoAction }) => {
 							disabled={!isEdit}
 						/>
 					</div>
-					<div className="input-group mb-3">
+					{/* <div className="input-group mb-3">
 						<div className="input-group-prepend">
 							<span className="input-group-text" id="basic-addon1">
 								Address
@@ -79,7 +55,7 @@ const MenuList = ({ index, userInfo, updateUserInfoAction }) => {
 							style={{ resize: 'none' }}
 							onChange={e => setAddress(e.target.value)}
 						/>
-					</div>
+					</div> */}
 					{isEdit ? (
 						<button
 							className="btn btn-primary"
@@ -111,20 +87,32 @@ const MenuList = ({ index, userInfo, updateUserInfoAction }) => {
 };
 
 const Profile = ({ user, saveUserData, history }) => {
-	const { isLogin, userInfo } = user;
-	const [loginInfo, setLoginInfo] = useState(null);
-	const [isLoadUserInfo, setLoadUseInfo] = useState(false);
-	const [menuNum, setMenu] = useState(0);
-
-	const onClickLogin = () => {
-		const { username, password } = loginInfo;
-		setLoadUseInfo(!isLoadUserInfo);
-		saveUserData({ username, password });
-		cookies.set('username', username);
-		const passwordWithToken = jwt.sign({ password }, '8');
-		cookies.set('password', passwordWithToken);
-		setLoadUseInfo(!isLoadUserInfo);
+	const authConfig = {
+		// Popup signin flow rather than redirect flow.
+		signInFlow: 'popup',
+		// Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+		signInSuccessUrl: '/profile',
+		// We will display Google and Facebook as auth providers.
+		signInOptions: [
+			firebaseLib.auth.EmailAuthProvider.PROVIDER_ID,
+			firebaseLib.auth.PhoneAuthProvider.PROVIDER_ID,
+		],
+		callbacks: {
+			// Avoid redirects after sign-in.
+			signInSuccessWithAuthResult: () => false,
+		},
 	};
+
+	useEffect(() => {
+		const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
+			if (user) {
+				saveUserData(user);
+			}
+		});
+		return () => {
+			unregisterAuthObserver();
+		};
+	}, []);
 
 	return (
 		<div>
@@ -137,96 +125,13 @@ const Profile = ({ user, saveUserData, history }) => {
 					paddingBottom: '50px',
 				}}
 			>
-				{isLogin ? (
-					<div className="row">
-						<div className="col">
-							<div className="list-group">
-								<button
-									className="list-group-item list-group-item-action"
-									onClick={() => setMenu(0)}
-								>
-									General
-								</button>
-							</div>
-						</div>
-						<MenuList userInfo={userInfo} index={menuNum} />
-					</div>
-				) : isLoadUserInfo ? (
-					<div className="spinner-border text-primary" role="status">
-						<span className="sr-only">Loading...</span>
-					</div>
+				{user.isLogin ? (
+					<MenuList index={0} userInfo={user.userInfo} />
 				) : (
-					<form onSubmit={() => onClickLogin()}>
-						<div className="row">
-							<div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-								<div className="input-group mb-3">
-									<div className="input-group-prepend">
-										<span className="input-group-text" id="basic-addon1">
-											Username
-										</span>
-									</div>
-									<input
-										type="text"
-										className="form-control"
-										placeholder="Username"
-										aria-label="Username"
-										aria-describedby="basic-addon1"
-										autoFocus
-										onChange={e => {
-											setLoginInfo({ ...loginInfo, username: e.target.value });
-										}}
-									/>
-								</div>
-								<div className="input-group mb-3">
-									<div className="input-group-prepend">
-										<span className="input-group-text" id="basic-addon1">
-											Password
-										</span>
-									</div>
-									<input
-										type="password"
-										className="form-control"
-										placeholder="password"
-										aria-label="password"
-										aria-describedby="basic-addon1"
-										onChange={e => {
-											setLoginInfo({ ...loginInfo, password: e.target.value });
-										}}
-									/>
-								</div>
-								<ul style={{ listStyleType: 'none' }}>
-									<li>
-										<button
-											type="submit"
-											className="btn btn-primary"
-											style={{
-												margin: '2%',
-												width: '150px',
-												height: '50px',
-												borderRadius: '30px',
-											}}
-										>
-											<i className="fa fa-sign-in" aria-hidden="true" /> Login
-										</button>
-									</li>
-									<li>
-										<button
-											className="btn btn-success"
-											style={{
-												margin: '2%',
-												width: '150px',
-												height: '50px',
-												borderRadius: '30px',
-											}}
-											onClick={() => history.push('/register')}
-										>
-											<i className="fa fa-users" aria-hidden="true" /> Register
-										</button>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</form>
+					<StyledFirebaseAuth
+						uiConfig={authConfig}
+						firebaseAuth={firebase.auth()}
+					/>
 				)}
 			</div>
 		</div>
