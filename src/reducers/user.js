@@ -2,7 +2,9 @@ import Cookies from 'universal-cookie';
 const cookie = new Cookies();
 
 const initState = {
-	userInfo: {},
+	userInfo: {
+		uid: '',
+	},
 	isLogin: false,
 };
 
