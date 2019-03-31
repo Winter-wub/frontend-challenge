@@ -23,7 +23,7 @@ const Orders = ({ user, history }) => {
 	if (!isLogin) {
 		history.push('/profile');
 	}
-	const { orders, isLoad } = useFetchOrders(userInfo);
+	const { orders, isLoad, loadMore, hasMore } = useFetchOrders(userInfo);
 
 	return (
 		<div>
@@ -44,7 +44,6 @@ const Orders = ({ user, history }) => {
 					<table className="table">
 						<thead>
 							<tr>
-								<th scope="col">#</th>
 								<th scope="col">สินค้า</th>
 								<th scope="col">สถานะ</th>
 							</tr>
@@ -57,9 +56,8 @@ const Orders = ({ user, history }) => {
 								);
 
 								return (
-									<tr key={index}>
-										<th scope="row">{index}</th>
-										<td>
+									<tr key={order.id}>
+										<th scope="row">
 											<div className="list-group">
 												{order.product_ids.map((product, index) => (
 													<NavLink
@@ -76,7 +74,7 @@ const Orders = ({ user, history }) => {
 													</NavLink>
 												))}
 											</div>
-										</td>
+										</th>
 										<td>
 											{order.status === 'waiting' ? (
 												<ul style={{ listStyleType: 'none' }}>
@@ -113,6 +111,11 @@ const Orders = ({ user, history }) => {
 						</tbody>
 					</table>
 				)}
+				{orders.length > 0 && hasMore && (
+					<button className="btn btn-primary" onClick={() => loadMore()}>
+						Load more
+					</button>
+				)}
 			</div>
 			<Model
 				style={{ marginTop: '50px' }}
@@ -122,15 +125,15 @@ const Orders = ({ user, history }) => {
 			>
 				<div style={{ margin: '2%' }}>
 					<h3>ข้อมูลการชำระเงิน</h3>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon1">
+					<div className="input-group mb-3">
+						<div className="input-group-prepend">
+							<span className="input-group-text" id="basic-addon1">
 								Card Number
 							</span>
 						</div>
 						<input
 							type="text"
-							class="form-control"
+							className="form-control"
 							placeholder="Enter card number"
 							aria-label="Card number"
 							aria-describedby="basic-addon1"
@@ -138,15 +141,15 @@ const Orders = ({ user, history }) => {
 							onChange={e => setCardInfo.setCardNum(e.target.value)}
 						/>
 					</div>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon1">
+					<div className="input-group mb-3">
+						<div className="input-group-prepend">
+							<span className="input-group-text" id="basic-addon1">
 								Card Holder
 							</span>
 						</div>
 						<input
 							type="text"
-							class="form-control"
+							className="form-control"
 							placeholder="Enter card holder name"
 							aria-label="Name"
 							aria-describedby="basic-addon1"
@@ -154,15 +157,15 @@ const Orders = ({ user, history }) => {
 							onChange={e => setCardInfo.setHolder(e.target.value)}
 						/>
 					</div>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon1">
+					<div className="input-group mb-3">
+						<div className="input-group-prepend">
+							<span className="input-group-text" id="basic-addon1">
 								CCV
 							</span>
 						</div>
 						<input
 							type="text"
-							class="form-control"
+							className="form-control"
 							placeholder="Enter CCV"
 							aria-label="CCV"
 							aria-describedby="basic-addon1"
@@ -170,9 +173,9 @@ const Orders = ({ user, history }) => {
 							onChange={e => setCardInfo.setSec(e.target.value)}
 						/>
 					</div>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon1">
+					<div className="input-group mb-3">
+						<div className="input-group-prepend">
+							<span className="input-group-text" id="basic-addon1">
 								Expiry month
 							</span>
 						</div>
@@ -180,21 +183,21 @@ const Orders = ({ user, history }) => {
 							type="number"
 							min="1"
 							max="12"
-							class="form-control"
+							className="form-control"
 							placeholder="Enter month"
 							aria-label="Month"
 							aria-describedby="basic-addon1"
 							value={cardInfo.month}
 							onChange={e => setCardInfo.setMonth(e.target.value)}
 						/>
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon1">
+						<div className="input-group-prepend">
+							<span className="input-group-text" id="basic-addon1">
 								Expiry Year
 							</span>
 						</div>
 						<input
 							type="text"
-							class="form-control"
+							className="form-control"
 							placeholder="Enter Year"
 							aria-label="Year"
 							aria-describedby="basic-addon1"
