@@ -3,7 +3,7 @@ import usePagination from 'use-firestore-pagination';
 const firestore = firebase.firestore();
 const collectionRef = firestore.collection('products');
 
-const useFetchProducts = (type = 'shirt', limit = 10) => {
+const useFetchProducts = (type = 'shirt', limit = 1) => {
 	let query = {};
 	if (type === 'all') {
 		query = collectionRef.orderBy('created_at');
@@ -22,14 +22,6 @@ const useFetchProducts = (type = 'shirt', limit = 10) => {
 		id: doc.id,
 		...doc.data(),
 	}));
-
-	useEffect(() => {
-		setLoad(true);
-		fetchProduct(type, page, limit).then(products => {
-			setProducts(products);
-			setLoad(false);
-		});
-	}, [limit, page, type]);
 
 	return {
 		products,
