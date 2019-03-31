@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
-import axios from '../utils/axios';
+import firebase from '../utils/firebase';
+const firestore = firebase.firestore();
+const collectionRef = firestore.collection('products');
+
 const useProduct = id => {
 	const [product, setProduct] = useState(null);
 	const [isLoad, setLoad] = useState(true);
 	const fetchProduct = async id => {
 		setLoad(true);
 		try {
-			const { data } = await axios.get(`/product?id=${id}`);
-
+			const product = await collectionRef.doc(id).get();
 			return {
-				...data.data,
+				id: product.id,
+				...product.data(),
 			};
 		} catch (error) {
 			console.log(error);
-			return [];
+			return {};
 		}
 	};
 

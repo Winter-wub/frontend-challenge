@@ -1,17 +1,28 @@
 import { useEffect, useState } from 'react';
-import axios from '../utils/axios';
+import firebase from '../utils/firebase';
+const db = firebase.firestore();
+const collectionRef = db.collection('products');
+
 const useNewProducts = (format = 'default') => {
 	const [products, setProducts] = useState([]);
 	const [isNewProductsLoad, setisLoad] = useState(false);
 	const fetchProducts = async () => {
 		try {
-			const { data: response } = await axios.get(
-				'/products?type=all&page=1&limit=3',
-			);
+			const newProducts = [];
+			const productsRef = await collectionRef
+				.limit(3)
+				.orderBy('created_at')
+				.get();
+			productsRef.forEach(ref => {
+				newProducts.push({
+					id: ref.id,
+					...ref.data(),
+				});
+			});
 
-			return response.data;
+			return newProducts;
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			return [];
 		}
 	};
