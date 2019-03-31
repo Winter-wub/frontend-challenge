@@ -38,9 +38,7 @@ const Catagories = ({ addItem, cart }) => {
 		const windowBottom = windowHeight + window.pageXOffset;
 
 		if (windowBottom >= docHeight) {
-			console.log('true');
 		} else {
-			console.log('false');
 			!hasMore && loadMoreDelay();
 		}
 	};
