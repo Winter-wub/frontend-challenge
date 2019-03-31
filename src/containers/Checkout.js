@@ -2,14 +2,24 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Model from 'react-responsive-modal';
-import axios from '../utils/axios';
+import firebase from '../utils/firebase';
+const firestore = firebase.firestore();
+const collectionRef = firestore.collection('orders');
 
 const createOrder = (productIds, userId) => {
 	return new Promise((resolve, reject) => {
-		axios
-			.post('/order', { user_id: userId, product_ids: productIds })
-			.then(({ data }) => resolve(data.data))
-			.catch(error => reject(error));
+		collectionRef
+			.add({
+				created_at: new Date(),
+				product_ids: productIds,
+				user_id: userId,
+				status: 'waiting',
+			})
+			.then(result => {
+				resolve({
+					id: result.id,
+				});
+			});
 	});
 };
 
