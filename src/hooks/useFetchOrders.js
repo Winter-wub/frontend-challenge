@@ -1,28 +1,21 @@
-import axios from '../utils/axios';
-import { useState, useEffect } from 'react';
+import firebase from '../utils/firebase';
+import usePagination from 'use-firestore-pagination';
+
+const firestore = firebase.firestore();
+const collectionRef = firestore.collection('orders');
 
 const useFetchOrders = userInfo => {
-	const [orders, setOrders] = useState([]);
-	const [isLoad, setLoad] = useState(false);
-	const fetchOrders = uid => {
-		return new Promise((resolve, reject) => {
-			setLoad(true);
-			axios
-				.get(`/orders?id=${uid}`)
-				.then(({ data }) => {
-					resolve(data.data);
-				})
-				.catch(error => {
-					reject(error);
-				})
-				.finally(() => setLoad(false));
-		});
-	};
-	useEffect(() => {
-		fetchOrders(userInfo.uid).then(orders => setOrders(orders));
-	}, []);
+	const { loading: isLoad, items, loadMore, hasMore } = usePagination(
+		collectionRef.where('user_id', '==', userInfo.uid).orderBy('created_at'),
+		{ limit: 5 },
+	);
 
-	return { orders, isLoad };
+	const orders = items.map(item => ({
+		id: item.id,
+		...item.data(),
+	}));
+
+	return { orders, isLoad, loadMore, hasMore };
 };
 
 export default useFetchOrders;
