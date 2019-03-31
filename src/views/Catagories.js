@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import useDebounceCallback from 'use-debounce/lib/callback';
 import useFetchProducts from '../hooks/useFetchProducts';
 import { productFormatter } from '../utils/product_formatter';
 import Card from '../components/card';
@@ -14,8 +15,43 @@ const mapDispatchs = dispatch => ({
 });
 
 const Catagories = ({ addItem, cart }) => {
-	const { isLoad, products, page, setPage } = useFetchProducts('all');
+	const { isLoad, products, loadMore, isLoadMore, hasMore } = useFetchProducts(
+		'all',
+	);
+	const [loadMoreDelay] = useDebounceCallback(() => {
+		loadMore();
+	}, 400);
+	const handleScroll = event => {
+		const windowHeight =
+			'innerHeight' in window
+				? window.innerHeight
+				: document.documentElement.offsetHeight;
+		const body = document.body;
+		const html = document.documentElement;
+		const docHeight = Math.max(
+			body.scrollHeight,
+			body.offsetHeight,
+			html.clientHeight,
+			html.scrollHeight,
+			html.offsetHeight,
+		);
+		const windowBottom = windowHeight + window.pageXOffset;
 
+		if (windowBottom >= docHeight) {
+			console.log('true');
+		} else {
+			console.log('false');
+			!hasMore && loadMoreDelay();
+		}
+	};
+
+	useEffect(() => {
+		window.addEventListener('scroll', handleScroll);
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
 	return (
 		<div>
 			<h1>Store</h1>
@@ -47,80 +83,49 @@ const Catagories = ({ addItem, cart }) => {
 					</div>
 				</div>
 				<div className="showcase" style={{ paddingLeft: '30px' }}>
-					{isLoad ? (
-						<div className="spinner-border text-primary" role="status">
-							<span className="sr-only">Loading...</span>
-						</div>
-					) : (
-						<div className="row">
-							{products.length <= 0 ? (
-								<div className="col">
-									<span role="img" aria-label="empty">
-										หมดแล้วจ้า ❎
-									</span>
-								</div>
-							) : (
-								products
-									.filter(rawProduct => rawProduct.in_stock > 0)
-									.map(rawProduct => {
-										const product = productFormatter(rawProduct);
+					<div className="row">
+						{products
+							.filter(rawProduct => rawProduct.in_stock > 0)
+							.map(rawProduct => {
+								const product = productFormatter(rawProduct);
 
-										return (
-											<Card
-												label={product.label}
-												imgUrl={product.imgUrl}
-												key={product.id}
-												link={product.url}
-											>
-												<p className="card-text">{product.description}</p>
-												<NavLink
-													to={product.url}
-													className="btn btn-outline-primary"
-													style={{ margin: '15px' }}
-												>
-													{product.price} ฿
-												</NavLink>
-												<button
-													className="btn btn-outline-warning"
-													style={{ margin: '15px' }}
-													onClick={() => {
-														addItem({ ...rawProduct, value: 1 });
-													}}
-												>
-													<i className="fa fa-plus" aria-hidden="true" /> Cart
-												</button>
-											</Card>
-										);
-									})
-							)}
+								return (
+									<Card
+										label={product.label}
+										imgUrl={product.imgUrl}
+										key={product.id}
+										link={product.url}
+									>
+										<p className="card-text">{product.description}</p>
+										<NavLink
+											to={product.url}
+											className="btn btn-outline-primary"
+											style={{ margin: '15px' }}
+										>
+											{product.price} ฿
+										</NavLink>
+										<button
+											className="btn btn-outline-warning"
+											style={{ margin: '15px' }}
+											onClick={() => {
+												addItem({ ...rawProduct, value: 1 });
+											}}
+										>
+											<i className="fa fa-plus" aria-hidden="true" /> Cart
+										</button>
+									</Card>
+								);
+							})}
+					</div>
+
+					{(isLoad || isLoadMore) && hasMore && (
+						<div className="col">
+							<div className="spinner-border text-primary" role="status">
+								<span className="sr-only">Loading...</span>
+							</div>
 						</div>
 					)}
 				</div>
-
-				<ul className="pageController">
-					<li style={{ display: 'inline-block', margin: '1%' }}>
-						<button
-							className="btn btn-secondary"
-							onClick={() => setPage(page - 1)}
-							disabled={isLoad || page === 1}
-						>
-							<i className="fa fa-chevron-left" /> Previous
-						</button>
-					</li>
-					<li style={{ display: 'inline-block', margin: '1%' }}>
-						{<p>{page}</p>}
-					</li>
-
-					<li style={{ display: 'inline-block', margin: '1%' }}>
-						<button
-							className="btn btn-primary"
-							onClick={() => setPage(page + 1)}
-							disabled={isLoad || products.length <= 0}
-						>
-							Next <i className="fa fa-chevron-right" />
-						</button>
-					</li>
-				</ul>
 			</div>
 		</div>
 	);
