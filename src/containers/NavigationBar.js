@@ -3,14 +3,14 @@ import { Link, NavLink } from 'react-router-dom';
 import Checkout from '../containers/Checkout';
 import Cart from '../containers/Cart';
 import { connect } from 'react-redux';
-import firebase from '../utils/firebase';
+import firebaseLib from 'firebase';
 
 const mapStates = ({ cart, user }) => ({
 	cart,
 	user,
 });
 const signOutAction = () => dispatch => {
-	firebase
+	firebaseLib
 		.auth()
 		.signOut()
 		.then(() => {
@@ -20,15 +20,21 @@ const signOutAction = () => dispatch => {
 		});
 };
 
+const signInWithCurrentData = () => dispatch => {
+	const userInfo = firebaseLib.auth().currentUser;
+	if (userInfo) {
+		return dispatch({
+			...userInfo,
+		});
+	} else {
+		return dispatch();
+	}
+};
 const mapDispatch = dispatch => ({
 	removeCart: index =>
 		dispatch({ type: 'REMOVE_ITEM_CART', params: { index } }),
 	removeUserData: () => dispatch(signOutAction()),
-	saveUserData: userInfo =>
-		dispatch({
-			type: 'STORE_USER',
-			data: userInfo,
-		}),
+	saveUserData: () => dispatch(signInWithCurrentData()),
 });
 
 const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
