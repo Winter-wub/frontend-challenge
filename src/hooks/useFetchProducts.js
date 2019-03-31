@@ -1,22 +1,27 @@
-import { useEffect, useState } from 'react';
-import axios from '../utils/axios';
+import firebase from '../utils/firebase';
+import usePagination from 'use-firestore-pagination';
+const firestore = firebase.firestore();
+const collectionRef = firestore.collection('products');
 
-const useFetchProducts = (type = 'shirt', limit = 5) => {
-	const [products, setProducts] = useState([]);
-	const [isLoad, setLoad] = useState(false);
-	const [page, setPage] = useState(1);
+const useFetchProducts = (type = 'shirt', limit = 1) => {
+	let query = {};
+	if (type === 'all') {
+		query = collectionRef.orderBy('created_at');
+	} else {
+		query = collectionRef.where('type', '==', type).orderBy('created_at');
+	}
+	const {
+		loading: isLoad,
+		loadingMore: isLoadMore,
+		hasMore,
+		items,
+		loadMore,
+	} = usePagination(query, { limit });
 
-	const fetchProduct = async (type = 'shirt', page = 1, limit = 2) => {
-		try {
-			const { data } = await axios.get(
-				`/products?type=${type}&page=${page}&limit=${limit}`,
-			);
-			return data.data;
-		} catch (error) {
-			console.log(error);
-			return [];
-		}
-	};
+	const products = items.map(doc => ({
+		id: doc.id,
+		...doc.data(),
+	}));
 
 	useEffect(() => {
 		setLoad(true);
@@ -29,8 +34,9 @@ const useFetchProducts = (type = 'shirt', limit = 5) => {
 	return {
 		products,
 		isLoad,
-		page,
-		setPage,
+		loadMore,
+		isLoadMore,
+		hasMore,
 	};
 };
 
