@@ -20,21 +20,15 @@ const signOutAction = () => dispatch => {
 		});
 };
 
-const signInWithCurrentData = () => dispatch => {
-	const userInfo = firebaseLib.auth().currentUser;
-	if (userInfo) {
-		return dispatch({
-			...userInfo,
-		});
-	} else {
-		return dispatch();
-	}
-};
 const mapDispatch = dispatch => ({
 	removeCart: index =>
 		dispatch({ type: 'REMOVE_ITEM_CART', params: { index } }),
 	removeUserData: () => dispatch(signOutAction()),
-	saveUserData: () => dispatch(signInWithCurrentData()),
+	saveUserData: userInfo =>
+		dispatch({
+			type: 'STORE_USER',
+			data: userInfo,
+		}),
 });
 
 const NavagationBar = ({ user, cart, saveUserData, removeUserData }) => {
