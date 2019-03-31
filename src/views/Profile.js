@@ -103,16 +103,9 @@ const Profile = ({ user, saveUserData, history }) => {
 		},
 	};
 
-<<<<<<< master
-
 	useEffect(() => {
 		const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
 			if (user && !user.isLogin) {
-=======
-	useEffect(() => {
-		const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
-			if (user) {
->>>>>>> 👤 Make Auth with firebase auth
 				saveUserData(user);
 			}
 		});
