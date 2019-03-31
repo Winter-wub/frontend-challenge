@@ -3,7 +3,7 @@ import usePagination from 'use-firestore-pagination';
 const firestore = firebase.firestore();
 const collectionRef = firestore.collection('products');
 
-const useFetchProducts = (type = 'shirt', limit = 1) => {
+const useFetchProducts = (type = 'shirt', limit = 10) => {
 	let query = {};
 	if (type === 'all') {
 		query = collectionRef.orderBy('created_at');
