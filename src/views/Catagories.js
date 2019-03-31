@@ -83,41 +83,49 @@ const Catagories = ({ addItem, cart }) => {
 				</div>
 				<div className="showcase" style={{ paddingLeft: '30px' }}>
 					<div className="row">
-						{products
-							.filter(rawProduct => rawProduct.in_stock > 0)
-							.map(rawProduct => {
-								const product = productFormatter(rawProduct);
+						{isLoad ? (
+							<div className="col">
+								<div className="spinner-border text-primary" role="status">
+									<span className="sr-only">Loading...</span>
+								</div>
+							</div>
+						) : (
+							products
+								.filter(rawProduct => rawProduct.in_stock > 0)
+								.map(rawProduct => {
+									const product = productFormatter(rawProduct);
 
-								return (
-									<Card
-										label={product.label}
-										imgUrl={product.imgUrl}
-										key={product.id}
-										link={product.url}
-									>
-										<p className="card-text">{product.description}</p>
-										<NavLink
-											to={product.url}
-											className="btn btn-outline-primary"
-											style={{ margin: '15px' }}
+									return (
+										<Card
+											label={product.label}
+											imgUrl={product.imgUrl}
+											key={product.id}
+											link={product.url}
 										>
-											{product.price} ฿
-										</NavLink>
-										<button
-											className="btn btn-outline-warning"
-											style={{ margin: '15px' }}
-											onClick={() => {
-												addItem({ ...rawProduct, value: 1 });
-											}}
-										>
-											<i className="fa fa-plus" aria-hidden="true" /> Cart
-										</button>
-									</Card>
-								);
-							})}
+											<p className="card-text">{product.description}</p>
+											<NavLink
+												to={product.url}
+												className="btn btn-outline-primary"
+												style={{ margin: '15px' }}
+											>
+												{product.price} ฿
+											</NavLink>
+											<button
+												className="btn btn-outline-warning"
+												style={{ margin: '15px' }}
+												onClick={() => {
+													addItem({ ...rawProduct, value: 1 });
+												}}
+											>
+												<i className="fa fa-plus" aria-hidden="true" /> Cart
+											</button>
+										</Card>
+									);
+								})
+						)}
 					</div>
 
-					{(isLoad || isLoadMore) && hasMore && (
+					{isLoadMore && hasMore && (
 						<div className="col">
 							<div className="spinner-border text-primary" role="status">
 								<span className="sr-only">Loading...</span>
