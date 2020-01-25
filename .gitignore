@@ -25,5 +25,9 @@ yarn-error.log*
 .firebaserc
 firebase.json
 
+<<<<<<< HEAD
 *.config.js
 .idea/
+=======
+*.config.js
+>>>>>>> becomeServerlessApp
