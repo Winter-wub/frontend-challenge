@@ -20,7 +20,7 @@ const useFetchOrders = userInfo => {
 	};
 	useEffect(() => {
 		fetchOrders(userInfo.uid).then(orders => setOrders(orders));
-	}, []);
+	}, [userInfo.uid]);
 
 	return { orders, isLoad };
 };

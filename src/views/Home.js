@@ -6,7 +6,7 @@ const Home = ({ history }) => {
 	const { isNewProductsLoad, products } = useNewProducts('carousal');
 	useEffect(() => {
 		history.push('/products');
-	}, []);
+	}, [history]);
 	return (
 		<div className="container-fluid">
 			<h1>Home</h1>

@@ -24,7 +24,7 @@ const useFetchProducts = (type = 'shirt', limit = 5) => {
 			setProducts(products);
 			setLoad(false);
 		});
-	}, [page]);
+	}, [limit, page, type]);
 
 	return {
 		products,
