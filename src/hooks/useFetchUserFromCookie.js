@@ -27,7 +27,7 @@ const useFetchuserFromCookie = saveUserDataDispatch => {
 		if (userInfo) {
 			saveUserDataDispatch(userInfo);
 		}
-	}, []);
+	}, [saveUserDataDispatch]);
 
 	return {
 		isLoadUserInfo,

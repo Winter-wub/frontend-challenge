@@ -22,7 +22,7 @@ const useProduct = id => {
 			setProduct(product);
 			setLoad(false);
 		});
-	}, []);
+	}, [id]);
 	return {
 		isLoad,
 		product,

@@ -34,7 +34,7 @@ const useNewProducts = (format = 'default') => {
 			}
 			setisLoad(false);
 		});
-	}, []);
+	}, [format]);
 
 	return {
 		products,
