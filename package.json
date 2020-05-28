@@ -20,7 +20,7 @@
 		"react-tiny-popover": "^4.0.0",
 		"redux": "^4.0.4",
 		"redux-thunk": "^2.3.0",
-		"sweetalert2": "^9.5.3",
+		"sweetalert2": "^9.13.2",
 		"sweetalert2-react-content": "^2.0.2",
 		"universal-cookie": "^4.0.2"
 	},
