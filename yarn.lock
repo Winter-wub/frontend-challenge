@@ -9239,10 +9239,10 @@ react-scripts@3.3.0:
   optionalDependencies:
     fsevents "2.1.2"
 
-react-tiny-popover@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/react-tiny-popover/-/react-tiny-popover-4.0.0.tgz#648455bd8803434e0dcf04acc65ab6e3a4c42e75"
-  integrity sha512-9eTzEughY47VRZ7nNGfvvTLaBZfAIb+VGd+F/tmOCZE8Hi839fGC2P7UbCs+oz/e7xPfQzvB+Myq43C4Af80fQ==
+react-tiny-popover@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/react-tiny-popover/-/react-tiny-popover-6.0.2.tgz#0f6ad764c7d283822632845f53467cb22a372e68"
+  integrity sha512-2B6ydVrbPg1WDKkgD+CXk7ixifSoqV0/OslSqseoJDMBZ+0G77QZFOkx0znGn3Dpt++CZ724KkCEKUWOKBWs5g==
 
 react-transition-group@^4.0.0:
   version "4.3.0"
